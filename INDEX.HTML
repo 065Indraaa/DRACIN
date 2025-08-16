@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery Video</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 22px rgba(0, 200, 255, 0.6);
+    }
+    .card img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+    .card:hover img {
+      transform: scale(1.08);
+    }
+    .title {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    /* Popup video */
+    .video-popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .video-popup video {
+      width: 90%;
+      max-width: 800px;
+      border-radius: 12px;
+      outline: none;
+    }
+    .video-popup .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 32px;
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* Popup QR */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .popup {
+      position: relative;
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+      max-width: 320px;
+    }
+    .popup img {
+      max-width: 200px;
+      border-radius: 8px;
+    }
+    .popup button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #06b6d4;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .popup .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: #fff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Galeri Video Saya</h1>
+
+  <div class="grid">
+    <!-- Contoh 3 video dari Google Drive -->
+    <div class="card" onclick="prepareVideo('1Nh-h8jgvV5nakT8WS33vfxNaFfhzvPRw')">
+      <img src="thumbnail.jpg" alt="Thumbnail">
+      <div class="title">Video 1</div>
+    </div>
+    <div class="card" onclick="prepareVideo('1uvwXYZopqrLMNabcdEFGhijk')">
+      <img src="thumbnail.jpg" alt="Thumbnail">
+      <div class="title">Video 2</div>
+    </div>
+    <div class="card" onclick="prepareVideo('1klmNOPqrstUVWxyzABCDefgh')">
+      <img src="thumbnail.jpg" alt="Thumbnail">
+      <div class="title">Video 3</div>
+    </div>
+  </div>
+
+  <!-- Popup Video -->
+  <div class="video-popup" id="videoPopup">
+    <button class="close-btn" onclick="closeVideo()">×</button>
+    <video id="popupVideo" controls controlsList="nodownload" oncontextmenu="return false;"></video>
+  </div>
+
+  <!-- Popup QR -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup">
+      <button class="close-btn" onclick="closePopup()">×</button>
+      <h3>Dukung Kami 🙌</h3>
+      <p>Scan QRIS untuk support update video terbaru!</p>
+      <img src="QRIS.jpg" alt="QRIS Support">
+      <br>
+      <button onclick="closePopup()">Tutup</button>
+    </div>
+  </div>
+
+  <script>
+    let nextVideoSrc = null;
+
+    // User klik video -> tampilkan popup QR dulu
+    function prepareVideo(fileId) {
+      // Simpan link direct Google Drive
+      nextVideoSrc = "https://drive.google.com/uc?export=download&id=" + fileId;
+      document.getElementById('popup').style.display = 'flex';
+    }
+
+    function openVideo(src) {
+      const popup = document.getElementById('videoPopup');
+      const video = document.getElementById('popupVideo');
+      video.src = src;
+      popup.style.display = 'flex';
+      video.play();
+    }
+
+    function closeVideo() {
+      const popup = document.getElementById('videoPopup');
+      const video = document.getElementById('popupVideo');
+      video.pause();
+      video.currentTime = 0;
+      popup.style.display = 'none';
+      video.src = "";
+    }
+
+    function closePopup(){
+      document.getElementById('popup').style.display = 'none';
+      if(nextVideoSrc){
+        openVideo(nextVideoSrc);
+        nextVideoSrc = null;
+      }
+    }
+
+    // Popup awal saat halaman load
+    window.addEventListener('load', ()=>{
+      document.getElementById('popup').style.display = 'flex';
+    });
+  </script>
+</body>
+</html>
